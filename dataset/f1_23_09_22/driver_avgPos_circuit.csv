@@ -1,0 +1,41 @@
+driverRef,location,pilot,somma,media
+hamilton,Abu Dhabi,hamilton,13,4.846153846153846
+hamilton,Budapest,hamilton,16,3.375
+hamilton,Montmeló,hamilton,16,5.25
+hamilton,Monza,hamilton,15,6.066666666666666
+hamilton,Sakhir,hamilton,15,3.4
+hamilton,Silverstone,hamilton,17,3.0588235294117645
+hamilton,Spa,hamilton,15,7.133333333333334
+hamilton,Spielberg,hamilton,11,4.0
+leclerc,Abu Dhabi,leclerc,4,8.25
+leclerc,Budapest,leclerc,5,11.8
+leclerc,Montmeló,leclerc,5,11.8
+leclerc,Monza,leclerc,4,8.5
+leclerc,Sakhir,leclerc,6,8.666666666666666
+leclerc,Silverstone,leclerc,6,5.833333333333333
+leclerc,Spa,leclerc,4,10.25
+leclerc,Spielberg,leclerc,7,6.857142857142857
+max_verstappen,Abu Dhabi,max_verstappen,7,4.571428571428571
+max_verstappen,Budapest,max_verstappen,8,5.875
+max_verstappen,Montmeló,max_verstappen,8,5.25
+max_verstappen,Monza,max_verstappen,7,11.0
+max_verstappen,Sakhir,max_verstappen,9,11.88888888888889
+max_verstappen,Silverstone,max_verstappen,9,8.0
+max_verstappen,Spa,max_verstappen,7,9.285714285714286
+max_verstappen,Spielberg,max_verstappen,10,5.9
+norris,Abu Dhabi,norris,3,6.666666666666667
+norris,Budapest,norris,4,11.0
+norris,Montmeló,norris,4,11.5
+norris,Monza,norris,3,5.333333333333333
+norris,Sakhir,norris,5,7.8
+norris,Silverstone,norris,5,7.0
+norris,Spa,norris,3,10.666666666666666
+norris,Spielberg,norris,6,4.833333333333333
+russell,Abu Dhabi,russell,3,16.666666666666668
+russell,Budapest,russell,4,11.25
+russell,Montmeló,russell,4,12.75
+russell,Monza,russell,3,12.333333333333334
+russell,Sakhir,russell,5,10.8
+russell,Silverstone,russell,5,14.8
+russell,Spa,russell,3,12.0
+russell,Spielberg,russell,6,13.833333333333334
