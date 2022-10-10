@@ -20,7 +20,7 @@ def timeConverter(stringa):
     sec = 0
   return sec
 
-df_path = 'dataset/f1_23_09_22/'
+df_path = '/Users/mattiaropelato/python/streamlit_test/dataset/f1_23_09_22/'
 
 circuits = pd.read_csv(df_path + 'circuits.csv') #
 constr_results = pd.read_csv(df_path + 'constructor_results.csv')
@@ -132,7 +132,7 @@ tipo = st.selectbox(
 
 arg = st.selectbox(
     'Rispetto a cosa?',
-    ('Durata Pit Stop', 'Numero incidenti', 'Lap Times', 'N')
+    ('Durata Pit Stop', 'Not implemented yet')
 )
 
 if (tipo == 'Distribuzione'): 
@@ -144,21 +144,21 @@ if (tipo == 'Distribuzione'):
 
 elif (tipo== 'Massimo'):
   if (arg == 'Durata Pit Stop'):
-#    fig = px.bar(circ_df.groupby(by='location').agg(seconds=('milliseconds', 'max'), n_gp=('raceId', 'nunique')).reset_index().sort_values(by='seconds',ascending=False),
-#                    x='location',
-#                    y='seconds',
-#                    color = 'n_gp',
+    fig = px.bar(circ_df.groupby(by='location').agg(seconds=('milliseconds', 'max'), n_gp=('raceId', 'nunique')).reset_index().sort_values(by='seconds',ascending=False),
+                    x='location',
+                    y='seconds',
+                    color = 'n_gp',
 #                    continuous_color_scale = px.colors.sequential.sunset,
-#                )
-    source = circ_df.groupby(by='location').agg(seconds=('milliseconds', 'max'), n_gp=('raceId', 'nunique')).reset_index().sort_values(by='seconds',ascending=False)
-    fig = alt.Chart(source)\
-                    .make_bar().encode(
-                      x='location',
-                      y='seconds',
-                   )
-    rule = alt.Chart(source).mark_rule(color='red').encode(y='mean(milliseconds)')
+                )
+#    source = circ_df.groupby(by='location').agg(seconds=('milliseconds', 'max'), n_gp=('raceId', 'nunique')).reset_index().sort_values(by='seconds',ascending=False)
+#    fig = alt.Chart(source)\
+#                    .make_bar().encode(
+#                      x='location',
+#                      y='seconds',
+#                   )
+#    rule = alt.Chart(source).mark_rule(color='red').encode(y='mean(milliseconds)')
 
-    (fig + rule).properties(width=600)
+#    (fig + rule).properties(width=600)
 
 elif (tipo== 'Minimo'):
   if (arg == 'Durata Pit Stop'):
@@ -166,14 +166,15 @@ elif (tipo== 'Minimo'):
                     x='location',
                     y='seconds',
                     color = 'n_gp',
-                    color_discrete_sequence = n_colors('rgb(0, 0, 255)', 'rgb(255, 0, 0)', 25, colortype = 'rgb'),
+#                    color_discrete_sequence = n_colors('rgb(0, 0, 255)', 'rgb(255, 0, 0)', 25, colortype = 'rgb'),
                 )
 
 elif (tipo== 'Media'):
   if (arg == 'Durata Pit Stop'):
-    fig = px.bar(circ_df.groupby(by='location').mean().reset_index().sort_values(by='milliseconds',ascending=False),
+    fig = px.bar(circ_df.groupby(by='location').agg(seconds=('milliseconds', 'mean'), n_gp=('raceId', 'nunique')).reset_index().sort_values(by='seconds',ascending=False),
                     x='location',
-                    y='milliseconds',
+                    y='seconds',
+                    color = 'n_gp',
                 )
 
 st.plotly_chart(fig)
