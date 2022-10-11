@@ -1,4 +1,3 @@
-from turtle import width
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -125,31 +124,6 @@ pit_stops.drop(['time', 'duration'], axis=1, inplace=True)
 circ_df = pit_stops.merge(results[['raceId', 'driverId', 'constructorId', 'positionOrder', ]], on=['raceId', 'driverId'])\
          .merge(races[['raceId', 'year', 'circuitId',]], on='raceId')\
          .merge(circuits[['circuitId', 'location']], on='circuitId')
-resu = results[['raceId', 'statusId']]\
-        .merge(races[['raceId', 'circuitId', 'year']], on='raceId')\
-        .merge(circuits[['circuitId', 'location']], on='circuitId')\
-        .merge(status, on='statusId')\
-        .drop('circuitId', axis=1)
-circuit_accidents = resu.loc[resu['statusId'].isin([3, 4, 20])]
-circuit_accidents = circuit_accidents[['location', 'status']]
-circuit_accidents = pd.crosstab(index=circuit_accidents['location'], columns=circuit_accidents['status'])
-circuit_accidents = circuit_accidents.reset_index()
-
-# Determine the number of races held at each circuit
-num_races = c_df.groupby('location').raceId.count().reset_index().rename(columns={'raceId': 'num_of_races'})
-circuit_accidents = pd.merge(circuit_accidents, num_races, on = 'location', how = 'left')
-
-# Calculate the total number of accidents at each circuit and arrange the dataframe according to this
-circuit_accidents['total_accidents'] = circuit_accidents['Accident'] + circuit_accidents['Collision'] + circuit_accidents['Spun off']
-circuit_accidents = circuit_accidents.sort_values(by = 'total_accidents', ascending = False)
-
-# Calculate the number of accidents per race
-circuit_accidents['accidents_per_race'] = (circuit_accidents['total_accidents']/circuit_accidents['num_of_races']).round(3)
-
-# Clean the dataframe by resetting the index
-circuit_accidents = circuit_accidents.reset_index()
-circuit_accidents = circuit_accidents.drop(['index'], axis = 1)
-circuit_accidents = circuit_accidents[circuit_accidents['num_of_races']>10]
 
 tipo = st.selectbox(
     'Cosa vuoi visualizzare?',
@@ -158,92 +132,49 @@ tipo = st.selectbox(
 
 arg = st.selectbox(
     'Rispetto a cosa?',
-    ('Durata Pit Stop', 'Crashes')
+    ('Durata Pit Stop', 'Not implemented yet')
 )
 
 if (tipo == 'Distribuzione'): 
   if (arg == 'Durata Pit Stop'):
-    source = circ_df[circ_df['milliseconds']<50].groupby(by=['raceId', 'location']).mean().reset_index().sort_values(by='milliseconds',ascending=True)
-    fig = alt.Chart(source)\
-                    .mark_boxplot(extent=0.5).encode(
-                      x='location',
-                      y=alt.Y('milliseconds', scale=alt.Scale(zero=False)),
-                   ).properties()
-  elif (arg == 'Crashes'):
-    source = resu.groupby(by=['raceId', 'location']).mean().reset_index()
-    fig = alt.Chart(source)\
-                        .mark_boxplot().encode(
-                          x=alt.X('location', sort='-y'),
-                          y=alt.Y('statusId', scale=alt.Scale(zero=False)),
-                      )
-  
-
+    fig = px.box(circ_df[circ_df['milliseconds']<50].groupby(by=['raceId', 'location']).mean().reset_index().sort_values(by='milliseconds',ascending=True),
+                 x='location',
+                 y='milliseconds',
+                )
 
 elif (tipo== 'Massimo'):
   if (arg == 'Durata Pit Stop'):
-    source = circ_df.groupby(by='location').agg(seconds=('milliseconds', 'max'), n_gp=('raceId', 'nunique')).reset_index().sort_values(by='seconds',ascending=False)
-    fig = alt.Chart(source)\
-                    .mark_bar().encode(
-                      x='location',
-                      y='seconds',
-                      color='n_gp'
-                   )
-    rule = alt.Chart(source).mark_rule(color='purple').encode(y='mean(seconds)')
+    fig = px.bar(circ_df.groupby(by='location').agg(seconds=('milliseconds', 'max'), n_gp=('raceId', 'nunique')).reset_index().sort_values(by='seconds',ascending=False),
+                    x='location',
+                    y='seconds',
+                    color = 'n_gp',
+#                    continuous_color_scale = px.colors.sequential.sunset,
+                )
+#    source = circ_df.groupby(by='location').agg(seconds=('milliseconds', 'max'), n_gp=('raceId', 'nunique')).reset_index().sort_values(by='seconds',ascending=False)
+#    fig = alt.Chart(source)\
+#                    .make_bar().encode(
+#                      x='location',
+#                      y='seconds',
+#                   )
+#    rule = alt.Chart(source).mark_rule(color='red').encode(y='mean(milliseconds)')
 
-    fig = (fig + rule).properties(width=600)
-  elif (arg == 'Crashes'):
-    source = circuit_accidents.sort_values('total_accidents').tail(20)
-    fig = alt.Chart(source)\
-                        .mark_bar().encode(
-                          x=alt.X('location', sort='-y'),
-                          y='total_accidents',
-                          color='num_of_races'
-                      )
-    rule = alt.Chart(circuit_accidents).mark_rule(color='purple').encode(y='mean(total_accidents)')
-
-    fig = (fig + rule)
-
+#    (fig + rule).properties(width=600)
 
 elif (tipo== 'Minimo'):
   if (arg == 'Durata Pit Stop'):
-    source = circ_df.groupby(by='location').agg(seconds=('milliseconds', 'min'), n_gp=('raceId', 'nunique')).reset_index().sort_values(by='seconds',ascending=False)
-    fig = alt.Chart(source)\
-                    .mark_bar().encode(
-                      x='location',
-                      y='seconds',
-                      color='n_gp'
-                   )
-    rule = alt.Chart(source).mark_rule(color='purple').encode(y='mean(seconds)')
-
-    fig = (fig + rule).properties(width=600)
-  elif (arg == 'Crashes'):
-    source = circuit_accidents.sort_values('total_accidents').head(20)
-    fig = alt.Chart(circuit_accidents)\
-                        .mark_bar().encode(
-                          x=alt.X('location', sort='y'),
-                          y='total_accidents',
-                          color='num_of_races'
-                      )
-    rule = alt.Chart(circuit_accidents).mark_rule(color='purple').encode(y='mean(total_accidents)')
-
-    fig = (fig + rule)
+    fig = px.bar(circ_df.groupby(by='location').agg(seconds=('milliseconds', 'min'), n_gp=('raceId', 'nunique')).reset_index().sort_values(by='seconds',ascending=False),
+                    x='location',
+                    y='seconds',
+                    color = 'n_gp',
+#                    color_discrete_sequence = n_colors('rgb(0, 0, 255)', 'rgb(255, 0, 0)', 25, colortype = 'rgb'),
+                )
 
 elif (tipo== 'Media'):
   if (arg == 'Durata Pit Stop'):
-    source = circ_df.groupby(by='location').agg(seconds=('milliseconds', 'mean'), n_gp=('raceId', 'nunique')).reset_index().sort_values(by='seconds',ascending=False)
-    fig = alt.Chart(source)\
-                    .mark_bar().encode(
-                      x='location',
-                      y='seconds',
-                      color='n_gp'
-                   )
-  elif (arg == 'Crashes'):
-    source = circuit_accidents
-    fig = alt.Chart(circuit_accidents)\
-                        .mark_bar().encode(
-                          x=alt.X('location', sort='-y'),
-                          y='accidents_per_race',
-                          color='num_of_races'
-                      )
+    fig = px.bar(circ_df.groupby(by='location').agg(seconds=('milliseconds', 'mean'), n_gp=('raceId', 'nunique')).reset_index().sort_values(by='seconds',ascending=False),
+                    x='location',
+                    y='seconds',
+                    color = 'n_gp',
+                )
 
-st.altair_chart(fig)
+st.plotly_chart(fig)
