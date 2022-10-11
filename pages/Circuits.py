@@ -21,7 +21,7 @@ def timeConverter(stringa):
     sec = 0
   return sec
 
-df_path = '/Users/mattiaropelato/python/streamlit_test/dataset/f1_23_09_22/'
+df_path = 'dataset/f1_23_09_22/'
 
 circuits = pd.read_csv(df_path + 'circuits.csv') #
 constr_results = pd.read_csv(df_path + 'constructor_results.csv')
